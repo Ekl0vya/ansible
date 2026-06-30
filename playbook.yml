@@ -1,0 +1,50 @@
+---
+- name: Deploy VMs to ESXi
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    esxi_host: "192.168.1.10"
+    esxi_user: "root"
+    esxi_pass: "MyPassword"
+
+    datastore_name: "datastore1"
+    network_name: "VM Network"
+
+    gateway: "192.168.1.1"
+    netmask: "255.255.255.0"
+
+    template_name: "RHEL9-Template"
+
+    vm_list:
+
+      - name: web01
+        ip_address: 192.168.1.101
+        cpu: 2
+        memory: 4096
+        disk: 40
+
+      - name: web02
+        ip_address: 192.168.1.102
+        cpu: 2
+        memory: 4096
+        disk: 40
+
+      - name: app01
+        ip_address: 192.168.1.110
+        cpu: 4
+        memory: 8192
+        disk: 80
+
+      - name: db01
+        ip_address: 192.168.1.120
+        cpu: 8
+        memory: 16384
+        disk: 200
+
+  tasks:
+    - name: Deploy VMs
+      ansible.builtin.include_tasks: create_vm.yml
+      loop: "{{ vm_list }}"
+      loop_control:
+        loop_var: vm
